@@ -15,7 +15,7 @@ const transport = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
     auth: {
-        user: 'jc.martin.orozco@gmail.com',
+        user: 'matiayesa99@gmail.com',
         pass: process.env.EMAIL_PASS
     }
 })
@@ -120,7 +120,7 @@ async function nodemail(req, res) {
         })
 
         const sendEmail = await transport.sendMail({
-            from: 'CoderHouse Proyecto Backend <jc.martin.orozco@gmail.com>',
+            from: 'CoderHouse Backend <matiayesa99@gmail.com>',
             to: req.user.email,
             subject: 'Purcharse',
             html

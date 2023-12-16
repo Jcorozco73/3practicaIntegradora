@@ -17,7 +17,7 @@ async function sendEmail(req, res, next) {
         const updateToken = await userService.put(user._id, { restoreToken })
 
         const mailOptions = {
-            from: 'jc.martin.orozco@gmail.com',
+            from: 'matiasayesa99@gmail.com',
             to: `${user.email}`,
             subject: 'Password restore',
             text: `Click the link to reset your password: http://localhost:8080/restore/${restoreToken.token}`
@@ -34,9 +34,6 @@ async function sendEmail(req, res, next) {
 
 async function getRestore(req, res, next) {
     try {
-        //! ! ! ! ! ! !! PROBA EL REQ.SESSION
-        const test = req.session
-        console.log(test)
         res.render('restorePassword')
     } catch (error) {
         console.error(error)
