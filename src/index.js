@@ -5,6 +5,7 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import flash from "connect-flash"
+import dotenv from "dotenv";
 //CONFIG & UTILS
 import __dirname from "./utils.js";
 import config from "./config/config.js"
@@ -40,7 +41,8 @@ app.use(Express.json())
 app.use(Express.urlencoded({ extended: true }))
 
 // * MONGO DB CONNECTION
-mongoose.connect('mongodb+srv://jcmartinorozco:16080073@cluster0.hvxvolp.mongodb.net/?retryWrites=true&w=majority')
+const { USER_NAME, DB_PASSWORD } = process.env
+mongoose.connect(`mongodb+srv://${USER_NAME}:${DB_PASSWORD}@cluster0.hvxvolp.mongodb.net/?retryWrites=true&w=majority`)
     .then(() => {
         console.log('connected to DB')
     })
@@ -51,7 +53,7 @@ mongoose.connect('mongodb+srv://jcmartinorozco:16080073@cluster0.hvxvolp.mongodb
 // * SESSIONS
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: ('mongodb+srv://jcmartinorozco:16080073@cluster0.hvxvolp.mongodb.net/?retryWrites=true&w=majority'),
+        mongoUrl: (`mongodb+srv://${USER_NAME}:${DB_PASSWORD}@cluster0.hvxvolp.mongodb.net/?retryWrites=true&w=majority`),
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
         ttl: 6000,
     }),
