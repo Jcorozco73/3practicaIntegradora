@@ -4,7 +4,7 @@ import productController from "../controllers/product.controller.js";
 // * AUTH middleware
 import auth from "../middleware/middleware.js";
 
-const productRouter = Router()
+ const productRouter = Router()
 
 
 // ! Los productos no se renderizan en 'products.handlebars'.
