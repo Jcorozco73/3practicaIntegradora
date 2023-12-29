@@ -1,6 +1,5 @@
 import chai from "chai";
 import supertest from "supertest";
-import productRouter from "../src/router/product.router.js";
 
 const expect = chai.expect;
 const api = supertest("http://localhost:8080");
