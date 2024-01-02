@@ -9,8 +9,8 @@ async function getLogin(req, res) {
         console.error(error)
     }
 }
-
-async function postLogin(req, res) {
+// PASSPORT REDIRECT
+/* async function postLogin(req, res) {
     try {
         if (!req.session.passport.user) {
             console.log('user', req.session.passport.user)
@@ -31,7 +31,7 @@ async function postLogin(req, res) {
         console.error(error)
     }
 }
-
+ */
 // *REGISTER
 async function getRegister(req, res) {
     try {
@@ -40,8 +40,8 @@ async function getRegister(req, res) {
         console.error(error)
     }
 }
-
-async function postRegister(req, res) {
+// PASSPORT REDIRECT
+/* async function postRegister(req, res) {
     try {
         const { first_name, last_name, email, age, password } = req.body
         console.log(req.body)
@@ -57,7 +57,7 @@ async function postRegister(req, res) {
     } catch (error) {
         console.error(error)
     }
-}
+} */
 
 // *USER
 async function getAllUsers(req, res) {
@@ -112,10 +112,11 @@ async function getCurrent(req, res) {
 }
 
 // * CHANGE ROLE FROM USER -> PREMIUM || PREMIUM -> USER
-async function changeRole(req, res) {
+/* async function changeRole(req, res) {
     try {
         const { uid } = req.params
         const user = await userService.getById(uid)
+
         if (user.role === user) {
             const test = await userService.put(uid, {role: premium})
             return res.send({test})
@@ -148,4 +149,68 @@ export default {
     postRegister,
 
     changeRole
+} */
+async function changeRole(req, res) {
+    try {
+        const { uid } = req.params
+        const user = await userService.getById(uid)
+
+        if (user[0].role === "user" && user[0].documents.length >= 3) {
+            const changeToPremium = await userService.put(uid, { role: "premium" })
+            return res.send({ changeToPremium })
+        }
+
+        if (user[0].role === "premium") {
+            const changeToUser = await userService.put(uid, { role: "user" })
+            return res.send({ changeToUser })
+        }
+
+        if (user[0].role === "admin") {
+            return res.send({nope: "that's an admin"})
+        }
+
+        res.send({error: "user's role isn't user, premium nor admin"})
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+// * UPLOAD DOCUMENT
+async function uploadDocument(req, res) {
+    try {
+        const path = req.file.path
+        const fileName = req.file.originalname
+        if (!req.file) return res.status(400).send({ status: 'error', error: 'file not uploaded' })
+
+        const user = await userService.getById(req.user._id)
+        if (!user) return res.status(404).send({ status: 'error', error: 'user no found' })
+
+        const documents = user[0].documents
+        documents.push({ name: fileName, reference: path })
+
+        const result = await userService.put(req.user._id, { documents })
+        if (!result) return res.status(400).send({ status: 'error', error: 'file not uploaded' })
+
+        res.send({ status: 'file uploaded', payload: req.file })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export default {
+    getAllUsers,
+    getUser,
+    putUser,
+    deleteUser,
+    getCurrent,
+
+    getLogin,
+    // postLogin,
+
+    getRegister,
+    // postRegister,
+
+    changeRole,
+
+    uploadDocument
 }

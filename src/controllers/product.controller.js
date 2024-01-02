@@ -80,6 +80,9 @@ async function deleteProduct(req, res) {
             if (_id === product.owner) {
                 const deleteProduct = await productService.delete(productId)
                 return res.send({ payload: deleteProduct })
+            } else {
+                return res.send({ result: "failed", message: "You are not the owner of this product" })
+            
             }
         }
         const deleteProduct = await productService.delete(productId)

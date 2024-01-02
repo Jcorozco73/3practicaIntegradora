@@ -15,7 +15,6 @@ const initializePassport = () => {
                 const { first_name, last_name, email, age } = req.body;
                 try {
                     let user = await UserModel.findOne({ email: username });
-                    let createCart = await CartModel.create({})
                     if (user) {
                         console.log("El usuario ya existe");
                         return done(null, false);
@@ -25,7 +24,8 @@ const initializePassport = () => {
                         console.log("Faltan campos obligatorios");
                         return done(null, false);
                     }
-
+                    
+                    let createCart = await CartModel.create({})
                     const newUser = {
                         first_name,
                         last_name,
@@ -37,7 +37,8 @@ const initializePassport = () => {
                             token: "A",
                             expirationTime: 1
                         },
-                        role: "user"    
+                        role: role || "user",
+                        last_seen: new Date()  
                     };
                     let result = await UserModel.create(newUser);
                     return done(null, result);
@@ -70,6 +71,8 @@ const initializePassport = () => {
                 console.log('password does not check')
                 return done(null, false);
             }
+            user.last_seen = new Date();
+            await user.save();
 
             return done(null, user);
 

@@ -4,6 +4,7 @@ import passport from "passport";
 import userController from "../controllers/user.controller.js";
 // * AUTH middleware
 import auth from '../middleware/middleware.js'
+import { upload } from "../utils.js";
 
 const userRouter = Router()
 
@@ -44,5 +45,9 @@ userRouter.get("/current", auth.checkAuthenticated,
 // * CHANGES USER'S ROLE FROM PREMIUM TO USER AND VICEVERSA
 userRouter.post("/premium/:uid", auth.checkAuthenticated,
     userController.changeRole)
+
+    userRouter.post('/documents', auth.checkAuthenticated, auth.authorizationUser, upload, userController.uploadDocument)
+
+    
     
 export default userRouter

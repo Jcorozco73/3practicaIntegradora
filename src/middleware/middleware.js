@@ -13,7 +13,21 @@ async function authorizationAdmin(req, res, next) {
     }
 }
 
-// * IF NOT USER = 403 
+async function authorizationAdminAndPremium(req, res, next) {
+    try {
+        if (req.user.role === 'user') {
+            return res.status(403).render('forbidden')
+        }
+        if (req.user.role === 'admin' || req.user.role === 'premium') {
+            req.isPremium = req.user.role === 'premium'
+            return next()
+        }
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 async function authorizationUser(req, res, next) {
     try {
         if (req.user.role === 'admin') {
@@ -21,12 +35,13 @@ async function authorizationUser(req, res, next) {
             return res.status(403).render('forbidden')
         }
         next()
+        
     } catch (error) {
         console.error(error)
     }
 }
 
-// * CHECK IF USER IS AUTHENTICATED
+
 async function checkAuthenticated(req, res, next) {
     try {
         if (req.isAuthenticated()) {
@@ -84,6 +99,7 @@ async function checkPremiumAddToCart(req, res, next) {
 
 export default {
     authorizationAdmin,
+    authorizationAdminAndPremium,
     authorizationUser,
     checkAuthenticated,
     checkNotAuthenticated,
