@@ -21,10 +21,9 @@ import restoreRouter from './router/restorePass.router.js'
 
 const app = Express()
 const PORT = 8080
-/* 
-const mongoURL = config.mongoUrl
-const PORT = config.port
-const secret = config.secret */
+
+
+const SECRET = config.secret 
 
 app.engine(
     "handlebars",
@@ -57,6 +56,7 @@ app.use(session({
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
         ttl: 6000,
     }),
+    secret: SECRET,
     resave: false,
     saveUninitialized: false,
 }))

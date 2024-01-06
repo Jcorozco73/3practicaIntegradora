@@ -16,7 +16,7 @@ userRouter.get('/login', auth.checkNotAuthenticated,
 userRouter.post("/login", auth.checkNotAuthenticated, passport.authenticate("login", {
     failureRedirect: "/user/login",
     successRedirect: "/user/current"
-}), userController.postLogin)
+}))
 
 // * USER PASSPORT REGISTER
 userRouter.get('/register', auth.checkNotAuthenticated, userController.getRegister)
@@ -24,18 +24,22 @@ userRouter.get('/register', auth.checkNotAuthenticated, userController.getRegist
 userRouter.post("/register", auth.checkNotAuthenticated, passport.authenticate("register", {
     failureRedirect: "/user/register",
     successRedirect: "/user/login"
-}), userController.postRegister)
+}))
+
+//* USER LOGOUT
+userRouter.post("/logout", auth.checkAuthenticated,
+    userController.logout)
 
 // * USER routes ADMIN ONLY
-userRouter.get('/', auth.authorizationAdmin,
+userRouter.get('/', auth.checkAuthenticated, auth.authorizationAdmin,
     userController.getAllUsers)
 
 // * UPDATE USER
-userRouter.put("/:uid", auth.authorizationAdmin,
+userRouter.put("/:uid", auth.checkAuthenticated, auth.authorizationAdmin,
     userController.putUser)
 
 // * DELETE USER
-userRouter.delete("/:uid", auth.authorizationAdmin,
+userRouter.delete("/:uid", auth.checkAuthenticated, auth.authorizationAdmin,
     userController.deleteUser)
 
 // * USER PROFILE

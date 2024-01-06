@@ -60,9 +60,21 @@ async function getRegister(req, res) {
 } */
 
 // *USER
+async function logout(req, res) {
+    try {
+        res.redirect('/logout')
+    } catch (error) {
+        console.error(error)
+    }
+}
 async function getAllUsers(req, res) {
     try {
         let users = await userService.get()
+        
+        const UserDtoTest = new UserDto(users)
+
+        const userDTOs = users.map(user => new UserDto(user))
+
         res.send({ result: 'success', payload: users })
     } catch (error) {
         console.error(error)
@@ -111,58 +123,26 @@ async function getCurrent(req, res) {
     }
 }
 
-// * CHANGE ROLE FROM USER -> PREMIUM || PREMIUM -> USER
-/* async function changeRole(req, res) {
-    try {
-        const { uid } = req.params
-        const user = await userService.getById(uid)
 
-        if (user.role === user) {
-            const test = await userService.put(uid, {role: premium})
-            return res.send({test})
-        }
-        
-        if (user.role === premium) {
-            const test2 = await userService.put(uid, {role: user})
-            return res.send({test2})
-        }
-
-        if (user.role === admin) {
-            return res.send("that's an admin")
-        }
-    } catch (error) {
-        console.error(error)
-    }
-}
-
-export default {
-    getAllUsers,
-    getUser,
-    putUser,
-    deleteUser,
-    getCurrent,
-
-    getLogin,
-    postLogin,
-    
-    getRegister,
-    postRegister,
-
-    changeRole
-} */
 async function changeRole(req, res) {
     try {
         const { uid } = req.params
         const user = await userService.getById(uid)
 
-        if (user[0].role === "user" && user[0].documents.length >= 3) {
+        if (user[0].role === "user") {
+        if (user[0].documents.length >= 3) {
             const changeToPremium = await userService.put(uid, { role: "premium" })
             return res.send({ changeToPremium })
+            } else {
+                return res.send({ error: 'in order to become a premium member you have to upload the files containing your information'})
+            }
+          
         }
 
         if (user[0].role === "premium") {
             const changeToUser = await userService.put(uid, { role: "user" })
             return res.send({ changeToUser })
+            
         }
 
         if (user[0].role === "admin") {
@@ -203,7 +183,7 @@ export default {
     putUser,
     deleteUser,
     getCurrent,
-
+    logout,
     getLogin,
     // postLogin,
 
