@@ -1,12 +1,14 @@
 import Cart from "../dao/classes/cart.mongo.js"
+import cartModel from "../dao/models/cart.model.js"
+import productModel from "../dao/models/product.model.js"
 const cartService = new Cart()
 
 async function getCart(req, res) {
     try {
         let cartId = req.user.cart
         let cart = await cartService.get(cartId)
-
-        res.send({ result: 'success', payload: { cart } })
+        let cartArray = cart[0].products
+        res.render('cart', cartArray)
     } catch (error) {
         console.error(error)
     }

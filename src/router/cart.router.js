@@ -20,7 +20,7 @@ cartRouter.put('/:cid/product/:pid', auth.authorizationUser, auth.checkPremiumAd
     cartController.putProductQuantity)
 
 // * DELETE STUFF FROM CART
-cartRouter.delete('/:cid/products/:pid', auth.authorizationUser,
+cartRouter.delete('/products/:pid', auth.authorizationUser,
     cartController.deleteProductFromCart)
 
 // * DELETE ALL 

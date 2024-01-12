@@ -1,5 +1,6 @@
 import ProductDto from "../dao/DTOs/product.dto.js"
 import { productService } from "../repository/app.js"
+import { transport } from "../config/nodemailer.config.js"
 // import Products from "../dao/classes/product.mongo.js"
 // const productService = new Products()
 
@@ -12,13 +13,9 @@ async function getProducts(req, res) {
 
         const findProducts = await productService.get(queryUrl, limitParam, pageParam, sortParam)
         const products = findProducts.docs
-    
-        // const filteredProducts = products.map((p) => {
-        //     new ProductDto(p)
-        // })
         
         // res.render('products', {products})
-        res.send({products})
+        res.send(products)
     } catch (error) {
         console.log(error)
     }
@@ -28,7 +25,6 @@ async function getProducts(req, res) {
 async function getById(req, res) {
     try {
         const { pid } = req.params
-        console.log('IDIDIDID')
         const findProduct = await productService.getById(pid)
 
         res.send(findProduct)
@@ -57,8 +53,8 @@ async function postProduct(req, res) {
         const data = req.body
         const { role } = req.user
 
-        if (role === 'premium') {
-            data.owner = req.user._id
+        if (req.isPremium) {
+            data.owner = req.user.email
         }
 
         const newProduct = await productService.post(data)
@@ -74,16 +70,26 @@ async function deleteProduct(req, res) {
         const productId = req.params.pid
         const { role, _id } = req.user
 
-        if (role === 'premium') {
-            const product = await productService.getById(productId)
+        const product = await productService.getById(productId)
 
+        const mailOptions = {
+            from: 'jc.martin.orozco@gmail.com',
+            to: `${product.owner}`,  
+            subject: `Product ${product.product}`,
+            text: `Your product has been deleted`
+        }
+        
+            if (role === 'premium') {
             if (_id === product.owner) {
                 const deleteProduct = await productService.delete(productId)
                 return res.send({ payload: deleteProduct })
             } else {
-                return res.send({ result: "failed", message: "You are not the owner of this product" })
+                return res.render('forbidden')
             
             }
+        }
+        if (product.owner !== admin) {
+            const send = await transport.sendMail(mailOptions)
         }
         const deleteProduct = await productService.delete(productId)
 

@@ -15,7 +15,7 @@ const transport = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
     auth: {
-        user: 'matiayesa99@gmail.com',
+        user: 'jc.martin.orozco@gmail.com',
         pass: process.env.EMAIL_PASS
     }
 })
@@ -48,8 +48,8 @@ async function purchase(req, res, next) {
                     const quantityToPurchase = item.quantity
                     const getProduct = await productService.getById(productId)
 
-                    if (getProduct.stock.stock_ammount >= quantityToPurchase) {
-                        getProduct.stock.stock_ammount -= quantityToPurchase
+                    if (getProduct.stock>= quantityToPurchase) {
+                        getProduct.stock -= quantityToPurchase
 
                         const updateProductInDB = await productService.put({ _id: productId }, getProduct)
 
@@ -120,7 +120,7 @@ async function nodemail(req, res) {
         })
 
         const sendEmail = await transport.sendMail({
-            from: 'CoderHouse Backend <matiayesa99@gmail.com>',
+            from: 'Backend <jc.martin.orozco@gmail.com>',
             to: req.user.email,
             subject: 'Purcharse',
             html
