@@ -20,7 +20,7 @@ import cartRouter from "./router/cart.router.js";
 import restoreRouter from './router/restorePass.router.js'
 
 const app = Express()
-const PORT = 8080
+const PORT = process.env.PORT||8080
 
 
 const SECRET = config.secret 
